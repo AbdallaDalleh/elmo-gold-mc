@@ -15,6 +15,7 @@ DBD += elmo.dbd
 # ELMO Gold Drives support
 elmo_SRCS += ElmoGoldController.cpp
 elmo_SRCS += ElmoGoldAxis.cpp
+elmo_SRCS += ElmoGoldRegister.cpp
 
 elmo_LIBS += $(EPICS_BASE_IOC_LIBS)
 
