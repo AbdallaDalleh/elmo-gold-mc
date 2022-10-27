@@ -11,9 +11,9 @@ ElmoGoldAxis::ElmoGoldAxis(ElmoGoldController* _controller, int axis_number)
 asynStatus ElmoGoldAxis::move(double position, int relative, double minVelocity, double maxVelocity, double acceleration)
 {
     if(relative)
-        sprintf(controller->outString_, "PR=%ld;BG;", NINT(position));
+        sprintf(controller->outString_, "MO=1;PR=%ld;BG;", NINT(position));
     else
-        sprintf(controller->outString_, "PA=%ld;BG;", NINT(position));
+        sprintf(controller->outString_, "MO=1;PA=%ld;BG;", NINT(position));
     controller->writeController();
 
     return asynSuccess;
@@ -62,7 +62,7 @@ asynStatus ElmoGoldAxis::setEncoderPosition(double position)
 {
     asynStatus status;
 
-    sprintf(controller->outString_, "FP=%ld", NINT(position));
+    sprintf(controller->outString_, "MO=0;FP=%ld;", NINT(position));
     status = controller->writeController();
     return status;
 }
@@ -70,6 +70,13 @@ asynStatus ElmoGoldAxis::setEncoderPosition(double position)
 asynStatus ElmoGoldAxis::setHighLimit(double highLimit)
 {
     asynStatus status;
+    double lowLimit;
+
+    getDoubleParam(motorLowLimit_, &lowLimit);
+    if(lowLimit >= highLimit) {
+        printf("lowLimit > highLimit\n");
+        return asynSuccess;
+    }
 
     sprintf(controller->outString_, "VH[3]=%ld", NINT(highLimit));
     status = controller->writeController();
@@ -79,6 +86,13 @@ asynStatus ElmoGoldAxis::setHighLimit(double highLimit)
 asynStatus ElmoGoldAxis::setLowLimit(double lowLimit)
 {
     asynStatus status;
+    double highLimit;
+
+    getDoubleParam(motorHighLimit_, &highLimit);
+    if(lowLimit >= highLimit) {
+        printf("lowLimit > highLimit\n");
+        return asynSuccess;
+    }
 
     sprintf(controller->outString_, "VL[3]=%ld", NINT(lowLimit));
     status = controller->writeController();
